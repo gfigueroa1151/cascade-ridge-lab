@@ -1,6 +1,6 @@
 # Cascade Ridge Logistics: Azure Security Lab
 
-I'm building a small fake company in Microsoft Azure from scratch so I can learn how a real environment is put together, secured, monitored and attacked. The company is called Cascade Ridge Logistics. It has five employees, an admin account, a hub-and-spoke network, a firewall I configured myself, and eventually a domain controller, a CRM app, Sentinel monitoring, an AI agent sandbox and an attack box.
+I'm building a small fake company in Microsoft Azure from scratch so I can learn how a real environment is put together, secured, monitored and attacked. The company is called Cascade Ridge Logistics. It has five employees, an admin account, a hub-and-spoke network, a firewall I configured myself, a domain controller with hardened Group Policy, department file shares full of fake company data, and eventually a CRM app, Sentinel monitoring, an AI agent sandbox and an attack box.
 
 This repo is my build log. It's a work in progress, and I add to it as I finish each phase.
 
@@ -26,7 +26,7 @@ The rules I set for myself:
 | [1. Identity](docs/phase-1-identity.md) | Employees, groups, separate admin account, MFA, Conditional Access, PIM | Done |
 | [2. Network](docs/phase-2-network.md) | Hub VNet plus 3 spokes, 12 subnets, 12 NSGs, peerings | Done |
 | [3. Firewall](docs/phase-3-firewall.md) | OPNsense firewall, WireGuard VPN, NAT, segmentation rules, route tables, testing | Done |
-| 4. On-prem simulation | Domain controller, AD and DNS, workstations, sync to Entra | Next |
+| [4. Active Directory](docs/phase-4-active-directory.md) | Real domain, domain controller, GPO hardening, LAPS, audit policy, private file shares, workstations, sync to Entra | In progress |
 | 5. Workloads and data | CRM app, storage and Key Vault behind private endpoints | Planned |
 | 6. Security monitoring | Log Analytics, Sentinel, Defender for Cloud, Nessus | Planned |
 | 7. AI agent sandbox | An agentic AI system in an isolated spoke, limited by identity and the firewall | Planned |
@@ -46,6 +46,7 @@ Some of the most useful parts of this build were the problems. A few highlights:
 * Azure quietly attached a second firewall rule set to my firewall's network card that would have silently dropped all forwarded traffic
 * My SSH test timed out even though the firewall logs said "pass," which turned out to be an Azure rule on the way out of the firewall
 * My first route table design would have let traffic skip the firewall because of how Azure picks the most specific route
+* My file share script reported success for a share that was never created, because PowerShell only warned instead of stopping
 
 The full list is in [lessons learned](docs/lessons-learned.md).
 
@@ -55,6 +56,9 @@ The full list is in [lessons learned](docs/lessons-learned.md).
 * Azure networking: VNets, subnets, NSGs, peering, user-defined routes, IP forwarding
 * Firewall administration: OPNsense gateways, static routes, outbound NAT, aliases, rule ordering, live log analysis
 * Remote access: WireGuard site setup with a split tunnel
+* Active Directory: forest setup, DNS, OUs, groups, separate admin accounts, PowerShell automation
+* Group Policy hardening: password and lockout policy, SMBv1 off, Windows LAPS, advanced audit policy
+* Azure Files: private endpoints, private DNS, AD authentication with Kerberos, share and NTFS permissions
 * Cost control: budgets, alerts, auto-shutdown on every VM
 * Troubleshooting: following a packet hop by hop and proving where it gets dropped
 

@@ -3,7 +3,7 @@
 **Dates:** Oct 28 to Oct 29, 2026
 **Goal:** Put an OPNsense firewall in the hub, reach it only through a VPN, and force all spoke traffic through it.
 
-[Back to README](../README.md) | [Previous: Phase 2](phase-2-network.md)
+[Back to README](../README.md) | [Previous: Phase 2](phase-2-network.md) | [Next: Phase 4](phase-4-active-directory.md)
 
 This was the hardest phase so far and the one I learned the most from. It's split into four parts: deploying the firewall, setting up the VPN, configuring OPNsense, and pointing Azure at it.
 

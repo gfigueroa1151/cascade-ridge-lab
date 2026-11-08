@@ -30,7 +30,7 @@ The current state of the network. I update this as the lab grows.
 | vm-dc01 | 10.2.1.4 | Domain controller and DNS for corp.cascaderidgelogistics.com |
 | stcrfiles01 (private endpoint) | 10.2.3.4 | Azure Files department shares, no public access |
 | vm-ws-fin01 | 10.1.1.4 | Finance workstation (Marcus) |
-| vm-ws-sales01 | 10.1.2.4 | Sales workstation (planned) |
+| vm-ws-sales01 | 10.1.2.4 | Sales workstation (Tom) |
 
 ## DNS
 
@@ -41,6 +41,23 @@ The current state of the network. I update this as the lab grows.
 | VNets on Azure DNS on purpose | vnet-hub (firewall), vnet-sandbox |
 | DC forwarder | 168.63.129.16 (Azure DNS) |
 | Private DNS zone | privatelink.file.core.windows.net, linked to vnet-servers and vnet-corp |
+
+## Identity sync
+
+| Item | Value |
+|---|---|
+| Method | Entra Cloud Sync, agent on vm-dc01 running as a gMSA |
+| Synced OUs | CascadeRidge\Users and CascadeRidge\Groups only |
+| Not synced on purpose | Admin accounts, computers, service accounts |
+| Password hash sync | On |
+
+## File share permissions
+
+| Share | Share level (Azure) | NTFS |
+|---|---|---|
+| finance, hr-dept, sales, ops, exec | Its own department group: Contributor | Its own department group: Modify |
+| public | Every department group: Reader. grp-it-admins: Contributor | Domain Users: Read. grp-it-admins: Modify |
+| Default for everyone else | None | n/a |
 
 ## Firewall (vm-fw01)
 
@@ -72,3 +89,4 @@ The current state of the network. I update this as the lab grows.
 | nsg-identity | Allow RDP to the DC from my VPN address. Allow AD ports (53, 88, 135, 389, 445, 464, 636, 3268 to 3269, 49152 to 65535) from 10.1.0.0/16 to the DC |
 | nsg-pe | Allow SMB 445 to the file share endpoint from the DC and from 10.1.0.0/16 |
 | nsg-finance | Allow RDP to vm-ws-fin01 from my VPN address |
+| nsg-sales | Allow RDP to vm-ws-sales01 from my VPN address |

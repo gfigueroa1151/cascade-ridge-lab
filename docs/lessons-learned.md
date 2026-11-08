@@ -6,6 +6,9 @@ Problems I hit during the build, how I fixed them, and what I'd do differently. 
 
 | Phase | What happened | Fix and lesson |
 |---|---|---|
+| 4 | Marcus was denied on every share right after I switched to per-department share permissions | The old default access disappeared instantly, but new role assignments take a few minutes to reach the storage account. **Lesson:** permission changes can leave a gap with no access, so do them in a maintenance window. |
+| 4 | The Cloud Sync agent's sign-in window was blocked | IE Enhanced Security blocks the old IE engine the installer uses. Trusted only the Microsoft sign-in sites, then turned the protection back on. |
+| 4 | Sync matches users but not groups | Deleted the duplicate cloud groups first (after checking no Conditional Access policy used them) so AD's groups replaced them. **Lesson:** test sync on one user with Provision on demand before turning it on for everyone. |
 | 4 | Marcus couldn't RDP in while his account said "must change password at next sign-in" | RDP with Network Level Authentication checks the password before the desktop loads, so there's nowhere to change it. Set the password directly for the test. **Lesson:** first sign-ins for new users belong at the console or a self-service reset, not RDP. |
 | 4 | Portal Browse on the file share said "You don't have access" | Public network access is off, so only machines inside the VNet reach the files. That's the private endpoint working. **Lesson:** the portal (control plane) and the data inside (data plane) are separate paths with separate rules. |
 | 4 | The ACL script failed on the first run, and hr-dept ended up with a single user in its permissions | A PowerShell drive is invisible to icacls without `-Persist`. Removed the stray user entry afterward. **Lesson:** give access to groups, never to one person. |

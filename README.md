@@ -26,8 +26,8 @@ The rules I set for myself:
 | [1. Identity](docs/phase-1-identity.md) | Employees, groups, separate admin account, MFA, Conditional Access, PIM | Done |
 | [2. Network](docs/phase-2-network.md) | Hub VNet plus 3 spokes, 12 subnets, 12 NSGs, peerings | Done |
 | [3. Firewall](docs/phase-3-firewall.md) | OPNsense firewall, WireGuard VPN, NAT, segmentation rules, route tables, testing | Done |
-| [4. Active Directory](docs/phase-4-active-directory.md) | Real domain, domain controller, GPO hardening, LAPS, audit policy, private file shares, workstations, sync to Entra | In progress |
-| 5. Workloads and data | CRM app, storage and Key Vault behind private endpoints | Planned |
+| [4. Active Directory](docs/phase-4-active-directory.md) | Real domain, domain controller, GPO hardening, LAPS, audit policy, private file shares, workstations, sync to Entra | Done |
+| 5. Workloads and data | Company website, email security (SPF, DKIM, DMARC), CRM app, Key Vault | Next |
 | 6. Security monitoring | Log Analytics, Sentinel, Defender for Cloud, Nessus | Planned |
 | 7. AI agent sandbox | An agentic AI system in an isolated spoke, limited by identity and the firewall | Planned |
 | 8. Attack and defend | Kali and an internet-facing honeypot, detections, incident reports | Planned |
@@ -59,6 +59,7 @@ The full list is in [lessons learned](docs/lessons-learned.md).
 * Active Directory: forest setup, DNS, OUs, groups, separate admin accounts, PowerShell automation
 * Group Policy hardening: password and lockout policy, SMBv1 off, Windows LAPS, advanced audit policy
 * Azure Files: private endpoints, private DNS, AD authentication with Kerberos, share and NTFS permissions
+* Hybrid identity: Entra Cloud Sync, OU scoping, matching cloud and on-prem accounts, gMSA service accounts
 * Cost control: budgets, alerts, auto-shutdown on every VM
 * Troubleshooting: following a packet hop by hop and proving where it gets dropped
 

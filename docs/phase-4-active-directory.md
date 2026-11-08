@@ -1,11 +1,11 @@
 # Phase 4: Active Directory and Hybrid Identity
 
-**Dates:** Oct 30, 2026 to present (in progress)
-**Goal:** Simulate an on-prem company inside Azure: a real domain, a domain controller, hardened Group Policy, department file shares with fake company data, domain-joined workstations, and eventually sync to Entra ID.
+**Dates:** Oct 30 to Nov 7, 2026
+**Goal:** Simulate an on-prem company inside Azure: a real domain, a domain controller, hardened Group Policy, department file shares with fake company data, domain-joined workstations, and sync to Entra ID.
 
 [Back to README](../README.md) | [Previous: Phase 3](phase-3-firewall.md)
 
-This phase is still going. So far I have the domain, the domain controller, the security baseline, the file shares and the first workstation done and tested. Syncing AD to Entra ID is next, and I'll add it here when it's finished.
+This was the biggest phase so far. In plain terms: I built the company's own Windows network (the kind most offices run), gave every employee a computer account and a department folder, locked it all down, and then connected it to the cloud so each person has one identity everywhere.
 
 I'm building everything secure first. Once the whole environment is up, I'll open holes on purpose and attack them in Phase 8.
 
@@ -122,7 +122,7 @@ Empty shares aren't much to protect or attack, so I wrote [scripts/New-CascadeRi
 
 ![Fake company data written](../images/phase4/14-fake-data.png)
 
-## Part 6: The first workstation and the real test
+## Part 6: Workstations and the real test
 
 **vm-ws-fin01** is Marcus's computer in the Finance subnet (10.1.1.4). It's Windows Server standing in for Windows 11, since Windows 11 in Azure needs a license I don't have, and it behaves the same for the domain, Group Policy and LAPS.
 
@@ -150,6 +150,64 @@ Then the test this whole phase was building toward. I signed in as Marcus (Finan
 
 ![Marcus is denied on HR](../images/phase4/19-marcus-denied.png)
 
+### The Sales workstation
+
+I built **vm-ws-sales01** (10.1.2.4) the same way. The second one went much faster because I knew the steps. It found the DC, joined the domain, pulled all four GPOs, and LAPS took over its local admin password.
+
+![Sales workstation can reach the DC](../images/phase4/20-sales-dc-connectivity.png)
+
+![GPOs, LAPS and Remote Desktop Users on the Sales workstation](../images/phase4/21-sales-gpo-laps.png)
+
+Then I signed in as Tom (Sales). Sales and Public opened, and Finance was **Access is denied**. That's the mirror image of Marcus's test, so least privilege works in both directions.
+
+![Tom can open Sales and Public but not Finance](../images/phase4/22-tom-test.png)
+
+## Part 7: Connecting AD to Entra ID (Cloud Sync)
+
+Up to this point every employee existed **twice**: once in Active Directory on the DC, and once in Entra ID from Phase 1. Two accounts, two passwords, no connection between them. Cloud Sync fixes that. AD becomes the **source of truth**, and Entra ID becomes a copy of it. That's what "hybrid identity" means, and it's how most real companies run.
+
+### Getting Entra ready
+
+* **Renamed the 5 cloud users** to `@cascaderidgelogistics.com` so their names match AD exactly. When names match, sync links the two accounts instead of creating a duplicate.
+* **Left the admin accounts alone.** carlos-admin and my break-glass account stay cloud-only on the default Microsoft domain, so they still work even if sync or the domain ever breaks.
+* **Deleted the 6 cloud groups** from Phase 1. Sync matches users but not groups, so keeping them would have left two groups with the same name. Before deleting, I checked that none of my Conditional Access policies used them.
+
+![Cloud users renamed to the company domain](../images/phase4/23-cloud-users-renamed.png)
+
+### Installing the agent
+
+Cloud Sync uses a small agent on the DC. It only connects **outbound** over HTTPS, so nothing new is open to the internet, and its traffic leaves through my firewall like everything else. The agent runs as a **gMSA** (group Managed Service Account), which is a service account whose password Windows creates and rotates by itself. No person ever knows it.
+
+![Provisioning agent installed](../images/phase4/24-sync-agent-installed.png)
+
+### Only syncing what should be in the cloud
+
+I limited sync to two OUs: **Users** and **Groups**. My Domain Admin account lives in Admin Accounts, so it never leaves AD. Computer and service accounts stay out too.
+
+![Sync limited to the Users and Groups OUs](../images/phase4/25-sync-scoping.png)
+
+### Testing one user first
+
+Before turning sync on for everyone, I used **Provision on demand** on Marcus alone. The important line is "Successfully matched object" and "updated," not "created." That means it linked to the existing cloud Marcus instead of making a second one. If something had been wrong, only one account would have been affected.
+
+![Provision on demand for Marcus](../images/phase4/26-provision-on-demand.png)
+
+Then I turned it on for everyone. All six employees now show **On-premises sync: Yes**, the admin accounts still show No, and the department groups came back with AD as their source.
+
+![Users syncing from AD](../images/phase4/27-synced-users.png)
+
+![Groups syncing from AD](../images/phase4/28-synced-groups.png)
+
+## Part 8: Locking each share to its department
+
+Remember the two locks on every share? Lock 2 (NTFS) was already per department. Lock 1 (the Azure share level) was still "every domain user," because Azure needed the groups in Entra first. Now that they're synced, I gave each department group access to only its own share, gave every department read access to Public with IT able to change it, and turned off the "every domain user" default.
+
+![Share permissions per department](../images/phase4/29-share-rbac.png)
+
+Now even if someone made a mistake in the NTFS permissions, Marcus still couldn't reach HR, because both locks would have to fail. That's **defense in depth**.
+
+Right after the change, Marcus was denied **everywhere** for a few minutes. The old "everyone" access disappeared instantly, but the new per-group access takes a little time to reach the storage account. That gap is deny by default doing its job, and it's why real companies make permission changes in a maintenance window.
+
 ## Problems I hit
 
 * **The cost estimator said $1,161 a month for the DC.** It's a preview feature and was wrong for that image. The real price on the Review + create page was $0.186 an hour.
@@ -158,12 +216,14 @@ Then the test this whole phase was building toward. I signed in as Marcus (Finan
 * **A share called "hr" failed, but my script said it worked.** Share names need at least 3 characters. I renamed it to hr-dept and changed the script to stop and report real errors.
 * **My ACL script couldn't see the drive it had just mapped.** A PowerShell drive is invisible to other programs like icacls unless you map it with `-Persist`.
 * **Marcus couldn't RDP in with "must change password at next sign-in."** RDP checks credentials before the desktop loads, so there's no screen to change the password on. I set his password directly for the test.
+* **Later, Marcus's password "stopped working."** It hadn't. I was typing it wrong, and the DC showed 4 bad attempts, one away from my own lockout policy kicking in. Every one of those tries is a 4625 event in the logs, which is exactly the pattern Sentinel will alert on in Phase 6.
+* **The Cloud Sync agent couldn't sign in.** The old Internet Explorer engine its sign-in window uses was blocked by IE Enhanced Security. I trusted only the Microsoft sign-in sites it needed, finished setup, and turned the protection back on.
+* **Provision on demand gave a vague error** on Microsoft's new page. The legacy page worked right away.
+* **I interrupted my own Cloud Shell script** by pressing keys while it ran. Running it again was safe because creating a role assignment that already exists doesn't make a duplicate.
 
 ## What's next
 
-* Build the Sales workstation and test Tom the same way
-* Sync AD to Entra ID with Cloud Sync, so the on-prem accounts and cloud accounts are the same people
-* Replace the "every domain user" share permission with per-department permissions
+Phase 5: a public website on the company domain, email security (SPF, DKIM, DMARC), and the CRM app.
 
 ## Key takeaway
 

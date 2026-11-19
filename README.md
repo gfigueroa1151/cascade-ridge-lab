@@ -1,6 +1,6 @@
 # Cascade Ridge Logistics: Azure Security Lab
 
-I'm building a small fake company in Microsoft Azure from scratch so I can learn how a real environment is put together, secured, monitored and attacked. The company is called Cascade Ridge Logistics. It has five employees, an admin account, a hub-and-spoke network, a firewall I configured myself, a domain controller with hardened Group Policy, department file shares full of fake company data, and eventually a CRM app, Sentinel monitoring, an AI agent sandbox and an attack box.
+I'm building a small fake company in Microsoft Azure from scratch so I can learn how a real environment is put together, secured, monitored and attacked. The company is called Cascade Ridge Logistics. It has five employees, an admin account, a hub-and-spoke network, a firewall I configured myself, a domain controller with hardened Group Policy, department file shares full of fake company data, a public website, real email locked down with SPF, DKIM and DMARC, a Key Vault, and an internal CRM. Still to come: Sentinel monitoring, an AI agent sandbox and an attack box.
 
 This repo is my build log. It's a work in progress, and I add to it as I finish each phase.
 
@@ -27,8 +27,8 @@ The rules I set for myself:
 | [2. Network](docs/phase-2-network.md) | Hub VNet plus 3 spokes, 12 subnets, 12 NSGs, peerings | Done |
 | [3. Firewall](docs/phase-3-firewall.md) | OPNsense firewall, WireGuard VPN, NAT, segmentation rules, route tables, testing | Done |
 | [4. Active Directory](docs/phase-4-active-directory.md) | Real domain, domain controller, GPO hardening, LAPS, audit policy, private file shares, workstations, sync to Entra | Done |
-| 5. Workloads and data | Company website, email security (SPF, DKIM, DMARC), CRM app, Key Vault | Next |
-| 6. Security monitoring | Log Analytics, Sentinel, Defender for Cloud, Nessus | Planned |
+| [5. Website, email and apps](docs/phase-5-workloads.md) | Company website, email security (SPF, DKIM, DMARC), Key Vault, internal CRM | Done |
+| 6. Security monitoring | Log Analytics, Sentinel, Defender for Cloud, Nessus | Next |
 | 7. AI agent sandbox | An agentic AI system in an isolated spoke, limited by identity and the firewall | Planned |
 | 8. Attack and defend | Kali and an internet-facing honeypot, detections, incident reports | Planned |
 
@@ -60,6 +60,9 @@ The full list is in [lessons learned](docs/lessons-learned.md).
 * Group Policy hardening: password and lockout policy, SMBv1 off, Windows LAPS, advanced audit policy
 * Azure Files: private endpoints, private DNS, AD authentication with Kerberos, share and NTFS permissions
 * Hybrid identity: Entra Cloud Sync, OU scoping, matching cloud and on-prem accounts, gMSA service accounts
+* Email security: SPF, DKIM, DMARC set to reject, Microsoft 365, reading message headers
+* Secrets management: Azure Key Vault with a private endpoint, RBAC, managed identities scoped to a single secret
+* Web and Linux: Azure Static Web Apps with security headers, Ubuntu, SSH keys, nginx, PostgreSQL, host firewall
 * Cost control: budgets, alerts, auto-shutdown on every VM
 * Troubleshooting: following a packet hop by hop and proving where it gets dropped
 

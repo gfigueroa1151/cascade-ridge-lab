@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ c.name }}{% endblock %}
+{% block content %}
+<h1>{{ c.name }}</h1>
+<div class="stats">
+  <div class="stat"><span>Account</span><b>{{ c.account }}</b></div>
+  <div class="stat"><span>City</span><b>{{ c.city }}</b></div>
+  <div class="stat"><span>Annual spend</span><b>${{ "{:,}".format(c.annual_spend) }}</b></div>
+  <div class="stat"><span>Account owner</span><b>{{ c.owner }}</b></div>
+</div>
+<h1>Shipments</h1>
+<div class="table-wrap"><table>
+  <tr><th>Shipment</th><th>Destination</th><th>Pickup</th><th>Truck</th><th>Status</th></tr>
+  {% for s in ships %}
+  <tr><td>{{ s.shipment_no }}</td><td>{{ s.destination }}</td><td>{{ s.pickup }}</td><td>{{ s.truck }}</td><td><span class="pill {{ s.status.split()[0] }}">{{ s.status }}</span></td></tr>
+  {% else %}
+  <tr><td colspan="5">No shipments yet.</td></tr>
+  {% endfor %}
+</table></div>
+{% endblock %}

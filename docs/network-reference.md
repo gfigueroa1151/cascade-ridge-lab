@@ -31,6 +31,8 @@ The current state of the network. I update this as the lab grows.
 | stcrfiles01 (private endpoint) | 10.2.3.4 | Azure Files department shares, no public access |
 | vm-ws-fin01 | 10.1.1.4 | Finance workstation (Marcus) |
 | vm-ws-sales01 | 10.1.2.4 | Sales workstation (Tom) |
+| vm-crm01 | 10.2.2.4 | Internal CRM (Ubuntu), crm.corp.cascaderidgelogistics.com |
+| kv-cascaderidge01 (private endpoint) | 10.2.3.5 | Key Vault, no public access |
 
 ## DNS
 
@@ -40,7 +42,8 @@ The current state of the network. I update this as the lab grows.
 | VNets using the DC for DNS | vnet-corp, vnet-servers |
 | VNets on Azure DNS on purpose | vnet-hub (firewall), vnet-sandbox |
 | DC forwarder | 168.63.129.16 (Azure DNS) |
-| Private DNS zone | privatelink.file.core.windows.net, linked to vnet-servers and vnet-corp |
+| Private DNS zones | privatelink.file.core.windows.net (vnet-servers, vnet-corp), privatelink.vaultcore.azure.net (vnet-servers) |
+| Public DNS (registrar) | Website on the root and www, MX to Microsoft 365, SPF, DKIM, DMARC p=reject |
 
 ## Identity sync
 
@@ -90,3 +93,6 @@ The current state of the network. I update this as the lab grows.
 | nsg-pe | Allow SMB 445 to the file share endpoint from the DC and from 10.1.0.0/16 |
 | nsg-finance | Allow RDP to vm-ws-fin01 from my VPN address |
 | nsg-sales | Allow RDP to vm-ws-sales01 from my VPN address |
+| nsg-identity | Allow DNS (53) from the apps subnet to the DC |
+| nsg-pe | Allow HTTPS 443 to the Key Vault endpoint from 10.2.0.0/16 |
+| nsg-apps | Allow SSH from my VPN address, HTTPS 443 from 10.1.0.0/16 |

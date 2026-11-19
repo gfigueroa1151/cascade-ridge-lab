@@ -3,7 +3,7 @@
 **Dates:** Oct 30 to Nov 7, 2026
 **Goal:** Simulate an on-prem company inside Azure: a real domain, a domain controller, hardened Group Policy, department file shares with fake company data, domain-joined workstations, and sync to Entra ID.
 
-[Back to README](../README.md) | [Previous: Phase 3](phase-3-firewall.md)
+[Back to README](../README.md) | [Previous: Phase 3](phase-3-firewall.md) | [Next: Phase 5](phase-5-workloads.md)
 
 This was the biggest phase so far. In plain terms: I built the company's own Windows network (the kind most offices run), gave every employee a computer account and a department folder, locked it all down, and then connected it to the cloud so each person has one identity everywhere.
 

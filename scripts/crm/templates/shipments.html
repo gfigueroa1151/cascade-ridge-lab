@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Shipments{% endblock %}
+{% block content %}
+<h1>Shipments</h1>
+<div class="table-wrap"><table>
+  <tr><th>Shipment</th><th>Customer</th><th>Origin</th><th>Destination</th><th>Pickup</th><th>Truck</th><th>Status</th></tr>
+  {% for s in rows %}
+  <tr><td>{{ s.shipment_no }}</td><td>{{ s.customer }}</td><td>{{ s.origin }}</td><td>{{ s.destination }}</td><td>{{ s.pickup }}</td><td>{{ s.truck }}</td><td><span class="pill {{ s.status.split()[0] }}">{{ s.status }}</span></td></tr>
+  {% endfor %}
+</table></div>
+{% endblock %}

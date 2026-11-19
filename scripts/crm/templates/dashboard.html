@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<div class="stats">
+  <div class="stat"><span>Customers</span><b>{{ stats.customers }}</b></div>
+  <div class="stat"><span>Shipments this month</span><b>{{ stats.shipments }}</b></div>
+  <div class="stat"><span>In transit now</span><b>{{ stats.in_transit }}</b></div>
+  <div class="stat"><span>Annual customer spend</span><b>${{ "{:,}".format(stats.revenue) }}</b></div>
+</div>
+<h1>Next pickups</h1>
+<div class="table-wrap"><table>
+  <tr><th>Shipment</th><th>Customer</th><th>Destination</th><th>Pickup</th><th>Status</th></tr>
+  {% for s in upcoming %}
+  <tr><td>{{ s.shipment_no }}</td><td>{{ s.customer }}</td><td>{{ s.destination }}</td><td>{{ s.pickup }}</td><td><span class="pill {{ s.status.split()[0] }}">{{ s.status }}</span></td></tr>
+  {% endfor %}
+</table></div>
+{% endblock %}

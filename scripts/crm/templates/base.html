@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}CRM{% endblock %} · Cascade Ridge</title>
+<style>
+  :root { --pine:#1f3d34; --moss:#4f7a5f; --stone:#f3f1ec; --line:#d9d5cc; --muted:#5d6762; --ink:#1d2320; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:var(--ink); background:var(--stone); }
+  .notice { background:#fff4d6; color:#5a4300; font-size:.85rem; text-align:center; padding:6px; border-bottom:1px solid #ecd59a; }
+  header { background:var(--pine); color:#fff; }
+  .bar { max-width:1100px; margin:0 auto; padding:14px 20px; display:flex; gap:24px; align-items:center; flex-wrap:wrap; }
+  .brand { font-weight:700; margin-right:auto; }
+  .brand small { display:block; font-weight:400; color:#b9d3c3; font-size:.75rem; }
+  nav a { color:#dce9e1; text-decoration:none; margin-left:18px; }
+  nav a:hover { color:#fff; }
+  main { max-width:1100px; margin:0 auto; padding:28px 20px; }
+  h1 { color:var(--pine); margin:0 0 20px; font-size:1.6rem; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:28px; }
+  .stat { background:#fff; border:1px solid var(--line); border-left:4px solid var(--moss); border-radius:6px; padding:16px; }
+  .stat span { color:var(--muted); font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; }
+  .stat b { display:block; font-size:1.6rem; color:var(--pine); margin-top:4px; }
+  table { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+  th, td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); font-size:.92rem; }
+  th { background:#e9e6df; color:var(--muted); font-weight:600; }
+  td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  a { color:#2f6f8f; }
+  .pill { padding:2px 8px; border-radius:10px; font-size:.8rem; background:#e5f4e4; }
+  .pill.Scheduled { background:#e7f1fb; } .pill.In { background:#f9eeda; }
+  .table-wrap { overflow-x:auto; }
+</style>
+</head>
+<body>
+<div class="notice">Internal lab application. Cascade Ridge Logistics is a fictional company and all data here is fake.</div>
+<header><div class="bar">
+  <div class="brand">Cascade Ridge CRM<small>Internal use only</small></div>
+  <nav><a href="/">Dashboard</a><a href="/customers">Customers</a><a href="/shipments">Shipments</a></nav>
+</div></header>
+<main>{% block content %}{% endblock %}</main>
+</body>
+</html>

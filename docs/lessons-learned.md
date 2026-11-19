@@ -6,6 +6,11 @@ Problems I hit during the build, how I fixed them, and what I'd do differently. 
 
 | Phase | What happened | Fix and lesson |
 |---|---|---|
+| 5 | The CRM server couldn't resolve names or download updates | The servers network uses the DC for DNS, and the DC's NSG only allowed workstations. Added a DNS-only rule for the apps subnet. **Lesson:** least privilege means listing every system that depends on a service. |
+| 5 | The portal suggested priority 4010 for a new NSG allow rule | That would sit below my deny at 4000 and never match. Used 130. **Lesson:** always check where a new rule lands in the order. |
+| 5 | The Key Vault private endpoint had a DNS zone but no record or VNet link | Added them from the private endpoint's DNS configuration page. **Lesson:** after any private endpoint, check the name resolves to the private IP from inside. |
+| 5 | DKIM keys failed to create on a new Microsoft 365 trial | Exchange wasn't finished provisioning. It worked a few days later. |
+| 5 | SSH ignored my private key | Windows let every account read the key file. Locked it to my account with icacls. |
 | 4 | Marcus was denied on every share right after I switched to per-department share permissions | The old default access disappeared instantly, but new role assignments take a few minutes to reach the storage account. **Lesson:** permission changes can leave a gap with no access, so do them in a maintenance window. |
 | 4 | The Cloud Sync agent's sign-in window was blocked | IE Enhanced Security blocks the old IE engine the installer uses. Trusted only the Microsoft sign-in sites, then turned the protection back on. |
 | 4 | Sync matches users but not groups | Deleted the duplicate cloud groups first (after checking no Conditional Access policy used them) so AD's groups replaced them. **Lesson:** test sync on one user with Provision on demand before turning it on for everyone. |

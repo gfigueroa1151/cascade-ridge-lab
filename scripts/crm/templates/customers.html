@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Customers{% endblock %}
+{% block content %}
+<h1>Customers</h1>
+<div class="table-wrap"><table>
+  <tr><th>Account</th><th>Customer</th><th>City</th><th>Contact</th><th>Annual spend</th><th>Owner</th></tr>
+  {% for c in rows %}
+  <tr><td>{{ c.account }}</td><td><a href="/customers/{{ c.id }}">{{ c.name }}</a></td><td>{{ c.city }}</td><td>{{ c.contact_email }}</td><td class="num">${{ "{:,}".format(c.annual_spend) }}</td><td>{{ c.owner }}</td></tr>
+  {% endfor %}
+</table></div>
+{% endblock %}

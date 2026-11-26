@@ -33,6 +33,7 @@ The current state of the network. I update this as the lab grows.
 | vm-ws-sales01 | 10.1.2.4 | Sales workstation (Tom) |
 | vm-crm01 | 10.2.2.4 | Internal CRM (Ubuntu), crm.corp.cascaderidgelogistics.com |
 | kv-cascaderidge01 (private endpoint) | 10.2.3.5 | Key Vault, no public access |
+| vm-scan01 | 10.0.2.4 | Nessus vulnerability scanner (Ubuntu), DNS points at the DC |
 
 ## DNS
 
@@ -96,3 +97,18 @@ The current state of the network. I update this as the lab grows.
 | nsg-identity | Allow DNS (53) from the apps subnet to the DC |
 | nsg-pe | Allow HTTPS 443 to the Key Vault endpoint from 10.2.0.0/16 |
 | nsg-apps | Allow SSH from my VPN address, HTTPS 443 from 10.1.0.0/16 |
+| nsg-mgmt | Allow SSH 22 and Nessus web 8834 to 10.0.2.4 from my VPN address |
+| nsg-identity | Allow DNS 53 from the scanner (10.0.2.4) to the DC |
+| nsg-identity, nsg-finance, nsg-sales | Allow-Scan-From-Scanner: TCP 135, 445, 49152 to 65535 from 10.0.2.4 only |
+| nsg-apps | Allow-Scan-From-Scanner: TCP 22, 443 from 10.0.2.4 only |
+
+## Monitoring
+
+| Item | Value |
+|---|---|
+| Workspace | law-cascaderidge (rg-core), daily cap 0.5 GB |
+| SIEM | Microsoft Sentinel |
+| Log sources | Entra ID sign-in and audit logs, Azure Activity, Windows Security events (Common set) from vm-dc01, vm-ws-fin01, vm-ws-sales01, Syslog from vm-crm01, Key Vault audit logs |
+| Analytics rules | Account locked out (4740), Member added to privileged group (4728, 4732, 4756), Privileged Role Assigned Outside PIM |
+| Scan accounts | svc-nessus in AD (in grp-vuln-scanners) and svc-nessus on vm-crm01 (SSH key limited to 10.0.2.4) |
+| Scan access GPO | CR-Vuln-Scan-Access on the Workstations OU |

@@ -6,6 +6,12 @@ Problems I hit during the build, how I fixed them, and what I'd do differently. 
 
 | Phase | What happened | Fix and lesson |
 |---|---|---|
+| 6 | Sentinel's Entra ID connector said "No permissions" | My Global Admin role is PIM-eligible, so I activated it first. **Lesson:** just-in-time admin means planning when you'll need the role. |
+| 6 | The Quotas page said I had no permission even though I'm Owner | Requested the vCPU increase through a support request instead, and it was approved in minutes. **Lesson:** when a portal page is wrong, there's usually another route to the same result. |
+| 6 | The new scanner couldn't resolve any names | It uses the DC for DNS and the DC's NSG didn't list it. Added a DNS-only rule for its IP. **Lesson:** every new machine that depends on the DC needs to be added on purpose. |
+| 6 | Creating the scan account in AD said access denied | The PowerShell window wasn't elevated, so UAC had stripped my admin rights. **Lesson:** check the title bar says Administrator. |
+| 6 | Nessus would have skipped every machine | My NSGs block ping, so I turned off ping-based host discovery. **Lesson:** a scanner that thinks a host is down reports nothing, which looks like a clean result. |
+| 6 | My lockout incident didn't show up in the Defender portal | The default view filters out low priority incidents. **Lesson:** know what your queue is hiding before you trust it. |
 | 5 | The CRM server couldn't resolve names or download updates | The servers network uses the DC for DNS, and the DC's NSG only allowed workstations. Added a DNS-only rule for the apps subnet. **Lesson:** least privilege means listing every system that depends on a service. |
 | 5 | The portal suggested priority 4010 for a new NSG allow rule | That would sit below my deny at 4000 and never match. Used 130. **Lesson:** always check where a new rule lands in the order. |
 | 5 | The Key Vault private endpoint had a DNS zone but no record or VNet link | Added them from the private endpoint's DNS configuration page. **Lesson:** after any private endpoint, check the name resolves to the private IP from inside. |

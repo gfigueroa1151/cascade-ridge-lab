@@ -136,6 +136,7 @@ server {
     ssl_certificate_key /etc/ssl/private/crm.key;
     ssl_protocols TLSv1.2 TLSv1.3;
     server_tokens off;
+    add_header Strict-Transport-Security "max-age=31536000" always;
     add_header X-Frame-Options DENY always;
     add_header X-Content-Type-Options nosniff always;
     add_header Referrer-Policy no-referrer always;

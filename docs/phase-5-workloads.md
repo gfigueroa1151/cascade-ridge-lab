@@ -3,7 +3,7 @@
 **Dates:** Nov 13 to Nov 19, 2026
 **Goal:** Give the company the things a real business runs on: a public website, real email that can't be spoofed, a safe place for secrets, and an internal app with customer data.
 
-[Back to README](../README.md) | [Previous: Phase 4](phase-4-active-directory.md)
+[Back to README](../README.md) | [Previous: Phase 4](phase-4-active-directory.md) | [Next: Phase 6](phase-6-monitoring.md)
 
 In plain terms: Cascade Ridge Logistics now has a website on its own domain, working company email, a locked vault for passwords, and an internal CRM that employees use to look up customers and shipments. Everything is still fake data, and everything is built secure first.
 
